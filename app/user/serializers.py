@@ -36,6 +36,27 @@ class UserSerializer(serializers.ModelSerializer):
         """Create and return a user with encrypted password."""
         return get_user_model().objects.create_user(**validated_data)
 
+    # instance --> model/instance that is being updated
+    # validated data --> data that has already passed serializer validation (email address, password, and name)
+    def update(self, instance, validated_data):
+        """Update and return user."""
+
+        # retrieve the password from the validated_data dictionary, and remove it
+        # 'get' would retrieve the password, but leave it
+        password = validated_data.pop('password','None')
+
+        # calls the update method on the ModelSerializer base class
+        # this will perform all the steps for updating the object
+        user = super().update(instance, validated_data)
+
+        # if password is true (user specified to set password)
+        if password:
+            user.set_password(password)
+            user.save()
+
+        # return the user, so it can be used by View later
+        return user
+
 
 class AuthTokenSerializer(serializers.Serializer):
     """Serializer for the user auth token."""
@@ -45,7 +66,7 @@ class AuthTokenSerializer(serializers.Serializer):
         trim_whitespace=False,
     )
 
-    def valdiate(self, attrs):
+    def validate(self, attrs):
         """Validate and authenticate the user."""
         email = attrs.get('email')
         password = attrs.get('password')

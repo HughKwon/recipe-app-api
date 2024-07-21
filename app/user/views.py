@@ -1,7 +1,7 @@
 """
 View for the user API.
 """
-from rest_framework import generics
+from rest_framework import generics, authentication, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
 
@@ -33,5 +33,24 @@ class CreateTokenView(ObtainAuthToken):
     # with this, we get the browsable API for Django, allows nice user interface
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
 
+# generics.RetrieveUpdateAPIView provides functionality for retrieving and updating objects in the database
+# supports HTTP GET, PATCH, and PUT
+class ManageUserView(generics.RetrieveUpdateAPIView):
+    """Manage the authenticated user."""
+    serializer_class = UserSerializer
 
+    # authentication in Django is split into 2 different things:
+    # authentication --> how do you know that the user is the user they say they are.
+    #                    we use token authentication
+    # permission --> we know who the user is, what can the user do in the system?
+    #                we want to make sure that the user that uses this API is authenticated
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
 
+    # we override the get_object, which gets the object for the HTTP GET (or any other) request
+    # In this case, we're just retrieving the user that's attached to the request
+    # When a user object is authenticated, the user object being authenticated gets assigned to the
+    # request object in the view
+    def get_object(self):
+        """Retrieve and return the authenticated user."""
+        return self.request.user
