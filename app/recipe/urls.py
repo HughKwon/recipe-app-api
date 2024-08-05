@@ -17,6 +17,8 @@ router = DefaultRouter()
 # create new endpoint API, assign all of the different endpoints from
 # our recipe view set to that endoint
 router.register('recipes', views.RecipeViewSet)
+router.register('tags', views.TagViewSet)
+router.register('ingredients', views.IngredientViewSet)
 
 app_name = 'recipe'
 

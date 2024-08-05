@@ -40,4 +40,9 @@ class UserAdmin(BaseUserAdmin):
     )
 
 admin.site.register(models.User, UserAdmin)
+# because we're just using the default Django, model, we do not need to provide the class
 admin.site.register(models.Recipe)
+
+admin.site.register(models.Tag)
+admin.site.register(models.Ingredient)
+
