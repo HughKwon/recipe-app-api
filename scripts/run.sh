@@ -5,7 +5,7 @@ set -e
 
 python manage.py wait_for_db
 # collect all static files and store them in collectstatic directory
-python mange.py collectstatic --noinput
+python manage.py collectstatic --noinput
 # make migrations if necessary
 python manage.py migrate
 
